@@ -59,6 +59,10 @@
 #        define __NR_process_vm_readv  270
 #        define __NR_process_vm_writev 271
 
+#    elif defined(PLATFORM_ARCH_RISCV)
+#        define __NR_process_vm_readv  270
+#        define __NR_process_vm_writev 271
+
 #    else
 #        error "Unsupported architecture for process_vm_readv and process_vm_writev syscalls"
 #    endif
