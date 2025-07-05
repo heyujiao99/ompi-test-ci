@@ -539,7 +539,7 @@ AC_DEFUN([OPAL_CHECK_INLINE_C_GCC],[
                 opal_gcc_inline_assign='"1: li %0,0" : "=&r"(ret)'
                 ;;
             riscv64*)
-                opal_gcc_inline_assign='"li %0, 0" : "=r"(ret)'
+                opal_gcc_inline_assign='"li %0, 0" : "=&r"(ret)'
                 ;;
         esac
 

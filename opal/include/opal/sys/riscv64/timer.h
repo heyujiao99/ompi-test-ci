@@ -1,14 +1,7 @@
 /* -*- Mode: C; c-basic-offset:4 ; indent-tabs-mode:nil -*- */
 /*
- * Copyright (c) 2008      The University of Tennessee and The University
- *                         of Tennessee Research Foundation.  All rights
- *                         reserved.
- * Copyright (c) 2016      Broadcom Limited. All rights reserved.
- * Copyright (c) 2016      Los Alamos National Security, LLC. All rights
- *                         reserved.
- * Copyright (c) 2021      Google, LLC. All rights reserved.
- * Copyright (c) 2022      Amazon.com, Inc. or its affiliates.
- *                         All Rights reserved.
+ * Copyright (c) 2025      Software System Team, SANECHIPS.
+ *                         All rights reserved.
  * $COPYRIGHT$
  *
  * Additional copyrights may follow
