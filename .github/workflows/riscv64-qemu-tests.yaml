@@ -31,17 +31,16 @@ jobs:
         sed -i '/^func_exec_program_core ()/,/^}/ s/\<exec\>/exec qemu-riscv64 -cpu rv64,v=true,vext_spec=v1.0,vlen=128 -L \$GCC_HOME\/sysroot/g' config/ltmain.sh
 
     - name: Config Open MPI
-      run: |
-        ./configure 
-          --prefix=$GCC_HOME 
-          --host=riscv64-unknown-linux-gnu 
-          SYSROOT=$GCC_HOME/sysroot 
-          CC=riscv64-unknown-linux-gnu-gcc  
-          LD=riscv64-unknown-linux-gnu-ld 
-          --disable-mpi-fortran
-          --disable-sphinx 
-          LDFLAGS=-Wl,-rpath-link,$GCC_HOME/lib 
-          CFLAGS="-march=rv64gcv"
+      run:  ./configure 
+              --prefix=$GCC_HOME 
+              --host=riscv64-unknown-linux-gnu 
+              SYSROOT=$GCC_HOME/sysroot 
+              CC=riscv64-unknown-linux-gnu-gcc  
+              LD=riscv64-unknown-linux-gnu-ld 
+              --disable-mpi-fortran
+              --disable-sphinx 
+              LDFLAGS=-Wl,-rpath-link,$GCC_HOME/lib 
+              CFLAGS="-march=rv64gcv"
     
     - name: Build Open MPI
       run: |  
