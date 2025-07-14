@@ -19,7 +19,8 @@ typedef uint64_t opal_timer_t;
 static inline opal_timer_t opal_sys_timer_get_cycles(void)
 {
     opal_timer_t ret;
-    __asm__ __volatile__("fence iorw, iorw" ::: "memory");
+    __asm__ __volatile__("fence.i");
+    __asm__ __volatile__("fence r, r" ::: "memory");
     __asm__ __volatile__("rdtime %0" : "=r"(ret));
 
     return ret;

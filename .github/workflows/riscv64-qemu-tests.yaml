@@ -1,0 +1,48 @@
+name: riscv64-qemu-test
+
+on: [pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env: 
+      riscv_gnu_toolchain_download_path: https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2025.07.03/riscv64-glibc-ubuntu-24.04-gcc-nightly-2025.07.03-nightly.tar.xz
+      
+    steps:
+    - name: Install depencencies
+      run: |
+        sudo apt update 
+        sudo apt install -y --no-install-recommends qemu-user wget   
+        wget ${riscv_gnu_toolchain_download_path}
+        tar -xvf riscv64-glibc-ubuntu-24.04-gcc-nightly-2025.07.03-nightly.tar.xz -C /mnt/riscv  
+        export GCC_HOME=/mnt/riscv
+        export PATH="$GCC_HOME/bin:$PATH"
+        export LD_LIBRARY_PATH="$GCC_HOME/lib:$LD_LIBRARY_PATH"
+      uses: actions/checkout@v4
+      with:
+       submodules: recursive
+    - name: Config Open MPI
+      run: |
+        ./autogen.pl
+        sed -i '/^func_exec_program_core ()/,/^}/ s/\<exec\>/exec qemu-riscv64 -cpu rv64,v=true,vext_spec=v1.0,vlen=128 -L \$GCC_HOME\/sysroot/g' config/ltmain.sh
+        mkdir build && cd build
+        ../configure 
+          --prefix=$GCC_HOME 
+          --host=riscv64-unknown-linux-gnu 
+          SYSROOT=$GCC_HOME/sysroot 
+          CC=riscv64-unknown-linux-gnu-gcc  
+          LD=riscv64-unknown-linux-gnu-ld 
+          --disable-mpi-fortran
+          --disable-sphinx 
+          LDFLAGS=-Wl,-rpath-link,$GCC_HOME/lib 
+          CFLAGS="-march=rv64gcv"
+        sed -i 's/#define OPAL_HAVE_GCC_BUILTIN_CSWAP_INT128 1/#define OPAL_HAVE_GCC_BUILTIN_CSWAP_INT128 0/' ./opal/include/opal_config.h
+    - name: Build Open MPI
+      run: |  
+        make -j 8
+        make install
+    - name: Run testsuite
+      run: |
+        make check
+
+
