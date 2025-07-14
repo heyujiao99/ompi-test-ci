@@ -35,6 +35,8 @@ jobs:
     
     - name: Build Open MPI
       run: |  
+        export PATH="/opt/riscv/bin:$PATH"
+        export LD_LIBRARY_PATH="/opt/riscv/lib:$LD_LIBRARY_PATH"
         sed -i 's/#define OPAL_HAVE_GCC_BUILTIN_CSWAP_INT128 1/#define OPAL_HAVE_GCC_BUILTIN_CSWAP_INT128 0/' ./opal/include/opal_config.h
         make -j 8
         make install
