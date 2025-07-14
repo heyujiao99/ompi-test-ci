@@ -14,7 +14,7 @@ jobs:
         sudo apt update 
         sudo apt install -y --no-install-recommends qemu-user wget   
         wget ${riscv_gnu_toolchain_download_path}
-        tar -xvf riscv64-glibc-ubuntu-24.04-gcc-nightly-2025.07.03-nightly.tar.xz -C /opt
+        tar -xvf riscv64-glibc-ubuntu-24.04-gcc-nightly-2025.07.03-nightly.tar.xz -C /opt/riscv  
         sed -i "s|libdir='/mnt/riscv/riscv64-unknown-linux-gnu/lib'|libdir='/opt/riscv/riscv64-unknown-linux-gnu/lib'|g" /opt/riscv/sysroot/lib/libatomic.la
         export GCC_HOME=/opt/riscv
         export PATH="$GCC_HOME/bin:$PATH"
@@ -24,12 +24,15 @@ jobs:
       uses: actions/checkout@v4
       with:
        submodules: recursive
-
-    - name: Config Open MPI
+    
+    - name: Bootstrap Open MPI
       run: |
         ./autogen.pl
         sed -i '/^func_exec_program_core ()/,/^}/ s/\<exec\>/exec qemu-riscv64 -cpu rv64,v=true,vext_spec=v1.0,vlen=128 -L \$GCC_HOME\/sysroot/g' config/ltmain.sh
         mkdir build && cd build
+
+    - name: Config Open MPI
+      run: |
         ../configure 
           --prefix=$GCC_HOME 
           --host=riscv64-unknown-linux-gnu 
@@ -40,15 +43,13 @@ jobs:
           --disable-sphinx 
           LDFLAGS=-Wl,-rpath-link,$GCC_HOME/lib 
           CFLAGS="-march=rv64gcv"
-        sed -i 's/#define OPAL_HAVE_GCC_BUILTIN_CSWAP_INT128 1/#define OPAL_HAVE_GCC_BUILTIN_CSWAP_INT128 0/' ./opal/include/opal_config.h
     
     - name: Build Open MPI
       run: |  
+        sed -i 's/#define OPAL_HAVE_GCC_BUILTIN_CSWAP_INT128 1/#define OPAL_HAVE_GCC_BUILTIN_CSWAP_INT128 0/' ./opal/include/opal_config.h
         make -j 8
         make install
     
     - name: Run testsuite
       run: |
         make check
-
-
