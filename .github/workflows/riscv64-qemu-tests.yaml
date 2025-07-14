@@ -18,9 +18,12 @@ jobs:
         export GCC_HOME=/mnt/riscv
         export PATH="$GCC_HOME/bin:$PATH"
         export LD_LIBRARY_PATH="$GCC_HOME/lib:$LD_LIBRARY_PATH"
+
+    - name: Checkout Open MPI
       uses: actions/checkout@v4
       with:
        submodules: recursive
+
     - name: Config Open MPI
       run: |
         ./autogen.pl
@@ -37,10 +40,12 @@ jobs:
           LDFLAGS=-Wl,-rpath-link,$GCC_HOME/lib 
           CFLAGS="-march=rv64gcv"
         sed -i 's/#define OPAL_HAVE_GCC_BUILTIN_CSWAP_INT128 1/#define OPAL_HAVE_GCC_BUILTIN_CSWAP_INT128 0/' ./opal/include/opal_config.h
+    
     - name: Build Open MPI
       run: |  
         make -j 8
         make install
+    
     - name: Run testsuite
       run: |
         make check
