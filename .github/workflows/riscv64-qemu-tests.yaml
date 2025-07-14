@@ -25,7 +25,7 @@ jobs:
     - name: Bootstrap Open MPI
       run: |
         ./autogen.pl
-        sed -i '/^func_exec_program_core ()/,/^}/ s/\<exec\>/exec qemu-riscv64 -cpu rv64,v=true,vext_spec=v1.0,vlen=128 -L \$GCC_HOME\/sysroot/g' config/ltmain.sh
+        sed -i '/^func_exec_program_core ()/,/^}/ s/\<exec\>/exec qemu-riscv64 -cpu rv64,v=true,vext_spec=v1.0,vlen=128 -L \/opt\/riscv\/sysroot/g' config/ltmain.sh
 
     - name: Config Open MPI
       run: |
