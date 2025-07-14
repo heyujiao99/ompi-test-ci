@@ -16,8 +16,6 @@ jobs:
         wget ${riscv_gnu_toolchain_download_path}
         tar -xvf riscv64-glibc-ubuntu-24.04-gcc-nightly-2025.07.03-nightly.tar.xz -C /opt
         sed -i "s|libdir='/mnt/riscv/riscv64-unknown-linux-gnu/lib'|libdir='/opt/riscv/riscv64-unknown-linux-gnu/lib'|g" /opt/riscv/sysroot/lib/libatomic.la
-        export PATH="/opt/riscv/bin:$PATH"
-        export LD_LIBRARY_PATH="/opt/riscv/lib:$LD_LIBRARY_PATH"
 
     - name: Checkout Open MPI
       uses: actions/checkout@v4
@@ -30,16 +28,10 @@ jobs:
         sed -i '/^func_exec_program_core ()/,/^}/ s/\<exec\>/exec qemu-riscv64 -cpu rv64,v=true,vext_spec=v1.0,vlen=128 -L \$GCC_HOME\/sysroot/g' config/ltmain.sh
 
     - name: Config Open MPI
-      run:  ./configure 
-              --prefix=/opt/riscv 
-              --host=riscv64-unknown-linux-gnu 
-              SYSROOT=/opt/riscv/sysroot 
-              CC=riscv64-unknown-linux-gnu-gcc  
-              LD=riscv64-unknown-linux-gnu-ld 
-              --disable-mpi-fortran 
-              --disable-sphinx 
-              LDFLAGS=-Wl,-rpath-link,/opt/riscv/lib 
-              CFLAGS="-march=rv64gcv"
+      run: |
+        export PATH="/opt/riscv/bin:$PATH"
+        export LD_LIBRARY_PATH="/opt/riscv/lib:$LD_LIBRARY_PATH"
+        ./configure --prefix=/opt/riscv --host=riscv64-unknown-linux-gnu SYSROOT=/opt/riscv/sysroot CC=riscv64-unknown-linux-gnu-gcc LD=riscv64-unknown-linux-gnu-ld --disable-mpi-fortran --disable-sphinx LDFLAGS=-Wl,-rpath-link,/opt/riscv/lib CFLAGS="-march=rv64gcv"
     
     - name: Build Open MPI
       run: |  
@@ -49,5 +41,6 @@ jobs:
     
     - name: Run testsuite
       run: |
+        export PATH="/opt/riscv/bin:$PATH"
+        export LD_LIBRARY_PATH="/opt/riscv/lib:$LD_LIBRARY_PATH"
         make check
-
