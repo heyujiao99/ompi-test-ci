@@ -16,9 +16,8 @@ jobs:
         wget ${riscv_gnu_toolchain_download_path}
         tar -xvf riscv64-glibc-ubuntu-24.04-gcc-nightly-2025.07.03-nightly.tar.xz -C /opt
         sed -i "s|libdir='/mnt/riscv/riscv64-unknown-linux-gnu/lib'|libdir='/opt/riscv/riscv64-unknown-linux-gnu/lib'|g" /opt/riscv/sysroot/lib/libatomic.la
-        export GCC_HOME=/opt/riscv
-        export PATH="$GCC_HOME/bin:$PATH"
-        export LD_LIBRARY_PATH="$GCC_HOME/lib:$LD_LIBRARY_PATH"
+        export PATH="/opt/riscv/bin:$PATH"
+        export LD_LIBRARY_PATH="/opt/riscv/lib:$LD_LIBRARY_PATH"
 
     - name: Checkout Open MPI
       uses: actions/checkout@v4
@@ -32,14 +31,14 @@ jobs:
 
     - name: Config Open MPI
       run:  ./configure 
-              --prefix=$GCC_HOME 
+              --prefix=/opt/riscv 
               --host=riscv64-unknown-linux-gnu 
-              SYSROOT=$GCC_HOME/sysroot 
+              SYSROOT=/opt/riscv/sysroot 
               CC=riscv64-unknown-linux-gnu-gcc  
               LD=riscv64-unknown-linux-gnu-ld 
-              --disable-mpi-fortran
+              --disable-mpi-fortran 
               --disable-sphinx 
-              LDFLAGS=-Wl,-rpath-link,$GCC_HOME/lib 
+              LDFLAGS=-Wl,-rpath-link,/opt/riscv/lib 
               CFLAGS="-march=rv64gcv"
     
     - name: Build Open MPI
