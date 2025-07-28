@@ -31,7 +31,7 @@ jobs:
       run: |
         export PATH="/opt/riscv/bin:$PATH"
         export LD_LIBRARY_PATH="/opt/riscv/lib:$LD_LIBRARY_PATH"
-        ./configure --prefix=/opt/riscv --host=riscv64-unknown-linux-gnu SYSROOT=/opt/riscv/sysroot CC=riscv64-unknown-linux-gnu-gcc LD=riscv64-unknown-linux-gnu-ld --disable-mpi-fortran --disable-sphinx LDFLAGS=-Wl,-rpath-link,/opt/riscv/lib CFLAGS="-march=rv64gcv"
+        ./configure --prefix=/opt/riscv --host=riscv64-unknown-linux-gnu SYSROOT=/opt/riscv/sysroot CC=riscv64-unknown-linux-gnu-gcc LD=riscv64-unknown-linux-gnu-ld --disable-mpi-fortran --disable-sphinx LDFLAGS=-Wl,-rpath-link=/opt/riscv/lib,-rpath=/opt/riscv/lib CFLAGS="-march=rv64gcv"
     
     - name: Build Open MPI
       run: |  
