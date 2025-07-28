@@ -54,7 +54,7 @@ jobs:
         export LD_LIBRARY_PATH="/opt/riscv/lib:$LD_LIBRARY_PATH"   
         mkdir -p /opt/riscv/sysroot/proc/device-tree/cpus/
         touch  /opt/riscv/sysroot/proc/device-tree/cpus/timebase-frequency
-        grep "cpu MHz" /proc/cpuinfo | head -n 1
-        grep "cpu MHz" /proc/cpuinfo | head -n 1 | awk '{printf("%d", $4*1000000)}' | perl -e 'print pack("N", <STDIN>)' > /opt/riscv/sysroot/proc/device-tree/cpus/timebase-frequency
+        grep "bogomips" /proc/cpuinfo | head -n 1
+        grep "bogomips" /proc/cpuinfo | head -n 1 | awk '{printf("%d", $3*500000)}' | perl -e 'print pack("N", <STDIN>)' > /opt/riscv/sysroot/proc/device-tree/cpus/timebase-frequency
         cd test/util
         ./opal_timer
