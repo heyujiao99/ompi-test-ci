@@ -56,8 +56,10 @@ jobs:
         touch  /opt/riscv/sysroot/proc/device-tree/cpus/timebase-frequency
         grep "bogomips" /proc/cpuinfo | head -n 1 | awk '{printf("%d", $3*500000)}' | perl -e 'print pack("N", <STDIN>)' > /opt/riscv/sysroot/proc/device-tree/cpus/timebase-frequency
         cd test/util
-        printf '#!/bin/bash\nexec qemu-riscv64 -cpu rv64,v=true,vext_spec=v1.0,vlen=128"$@"\n' > /opt/riscv/bin/wrapper.sh
+        file /opt/riscv/bin/prte
+        printf '#!/bin/bash\nexec qemu-riscv64 -cpu rv64,v=true,vext_spec=v1.0,vlen=128 "$@"\n' > /opt/riscv/bin/wrapper.sh
         chmod +x /opt/riscv/bin/wrapper.sh
         export OMPI_MCA_plm_rsh_agent=/opt/riscv/bin/wrapper.sh
         export OMPI_MCA_orte_launch_agent=/opt/riscv/bin/wrapper.sh
+        cat /opt/riscv/bin/wrapper.sh
         qemu-riscv64 -cpu rv64,v=true,vext_spec=v1.0,vlen=128 /opt/riscv/bin/mpirun ./opal_timer
